@@ -18,7 +18,7 @@ const loginSchema = z.object({
 });
 
 export type LoginResult =
-  | { ok: true; token: string; expiresAt: Date; userId: string; role: string }
+  | { ok: true; token: string; expiresAt: Date; userId: string; role: string; clinic: { id: string; code: string; name: string } | null }
   | {
       ok: false;
       reason: "invalid_input" | "invalid_credentials" | "mfa_required" | "locked" | "inactive";
@@ -38,10 +38,12 @@ export async function login(db: Pool, rawInput: unknown, ip: string | null): Pro
   const { identifier, password, channel, totp } = parsed.data;
 
   const { rows } = await db.query(
-    `SELECT id, role, password_hash, is_active, failed_logins, locked_until,
-            mfa_secret_enc, mfa_last_step
-       FROM users
-      WHERE email = $1 OR phone = $1
+    `SELECT u.id, u.role, u.password_hash, u.is_active, u.failed_logins, u.locked_until,
+            u.mfa_secret_enc, u.mfa_last_step,
+            u.clinic_id, c.code AS clinic_code, c.name AS clinic_name
+       FROM users u
+       LEFT JOIN clinics c ON c.id = u.clinic_id
+      WHERE u.email = $1 OR u.phone = $1
       LIMIT 1`,
     [identifier],
   );
@@ -89,7 +91,10 @@ export async function login(db: Pool, rawInput: unknown, ip: string | null): Pro
   );
 
   await auditLog(db, user.id, null, "auth.login_success", "user", user.id, ip);
-  return { ok: true, token, expiresAt, userId: user.id, role: user.role };
+  return {
+    ok: true, token, expiresAt, userId: user.id, role: user.role,
+    clinic: user.clinic_id ? { id: user.clinic_id, code: user.clinic_code, name: user.clinic_name } : null,
+  };
 }
 
 async function recordFailure(

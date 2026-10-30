@@ -5,6 +5,7 @@ const API_URL = process.env.API_URL ?? "http://localhost:3000";
 export interface Session {
   token: string;
   role: string;
+  clinic: { code: string; name: string } | null;
 }
 
 export async function getSession(): Promise<Session | null> {
@@ -12,7 +13,12 @@ export async function getSession(): Promise<Session | null> {
   const token = c.get("santeci_token")?.value;
   const role = c.get("santeci_role")?.value;
   if (!token || !role) return null;
-  return { token, role };
+  let clinic: Session["clinic"] = null;
+  try {
+    const raw = c.get("santeci_clinic")?.value;
+    clinic = raw ? (JSON.parse(raw) as Session["clinic"]) : null;
+  } catch { clinic = null; }
+  return { token, role, clinic };
 }
 
 /** Appel à l'API SanteCI avec le jeton de session. Ne pas utiliser côté client. */

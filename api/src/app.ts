@@ -32,6 +32,7 @@ export function buildApp(db: Pool): FastifyInstance {
       token: result.token,
       expiresAt: result.expiresAt,
       role: result.role,
+      clinic: result.clinic,
     });
   });
 

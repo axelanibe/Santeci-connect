@@ -37,6 +37,7 @@ export async function logout(): Promise<void> {
   }
   c.delete("santeci_token");
   c.delete("santeci_role");
+  c.delete("santeci_clinic");
   redirect("/login");
 }
 

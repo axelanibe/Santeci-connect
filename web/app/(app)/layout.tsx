@@ -26,6 +26,11 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             ))}
           </nav>
           <span className="spacer" />
+          {session?.clinic && (
+            <span className="clinic-badge" title="Clinique de rattachement — vos données sont isolées par clinique">
+              {session.clinic.name} · {session.clinic.code}
+            </span>
+          )}
           {session && <span className="role">{ROLE_LABELS[session.role] ?? session.role}</span>}
           <form action={logout}>
             <button className="btn-logout" type="submit">Déconnexion</button>

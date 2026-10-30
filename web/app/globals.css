@@ -37,6 +37,7 @@ a { color: var(--green-700); }
 .topbar nav a:hover, .topbar nav a.active { background: rgba(255,255,255,.12); color: #fff; }
 .topbar .spacer { flex: 1; }
 .topbar .role { font-size: .8rem; color: #cfe3d8; }
+.clinic-badge { font-size: .8rem; font-weight: 600; color: #0b3d2e; background: #ffd9a8; border-radius: 999px; padding: 4px 12px; white-space: nowrap; }
 .btn-logout { background: transparent; border: 1px solid rgba(255,255,255,.35); color: #fff; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: .85rem; }
 .btn-logout:hover { background: rgba(255,255,255,.12); }
 
