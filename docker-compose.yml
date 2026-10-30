@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: santeci
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me-en-local}
+      POSTGRES_DB: santeci
+    ports:
+      - "5432:5432"
+    volumes:
+      - santeci_pgdata:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+
+volumes:
+  santeci_pgdata:
